@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        #oDiv {
+            background-color: red;
+            width: 500px;
+            height: 100px;
+            color: #34ff66;
+            opacity: .1;
+            filter: alpha(opacity=10); /* IE 9 以下*/
+        }
+        #oDiv:after{
+            content: 'nihao';
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+<div id="oDiv"></div>
+<script type="text/javascript">
+    var oDiv = document.getElementById('oDiv');
+
+    // ele.style 只能获取行内样式
+    //    console.log(oDiv.style.width);
+
+    //    window.getComputedStyle() 获取经过浏览器计算过的样式（渲染到页面的样式）
+    //    window.getComputedStyle(curEle, 伪类(不用要写成null))  返回值 是CSSStyleDeclaration 的一个实例对象  里面包含着 所有经过浏览器计算过的样式属性
+    //    console.log(window.getComputedStyle(oDiv, null));
+//    console.log(window.getComputedStyle(oDiv, null)['width']);
+
+    // 获取伪类样式
+//    console.log(window.getComputedStyle(oDiv, ':after')['content']);
+//    console.log(window.getComputedStyle(oDiv, ':after')[':after']);
+
+
+    //    window.getComputedStyle() IE LOW 9以下 不支持这个属性方法
+    // IE 9 以下 需要使用 ele.currentStyle[attr]
+    //    console.log(oDiv.currentStyle.width);
+    //    console.log(oDiv.currentStyle['width']);
+
+//    console.log(getCss(oDiv, 'width'));
+    /**
+     *
+     * @param curEle 当前元素
+     * @param attr 样式属性
+     */
+    function getCss(curEle, attr) {
+        var val;
+        var reg;
+        if("getComputedStyle" in window) {
+            val = window.getComputedStyle(curEle, null)[attr]
+        } else { // IE9 以下 currentStyle 
+            // 需要注意获取 透明度的时候 要通过 filter来获取
+            if(attr === 'opacity') {
+                val = curEle.currentStyle['filter'];
+                // alpha(opacity=60)
+                reg = /alpha\(opacity=((?:\d|[1-9]\d+)(?:\.\d+)?)\)/;
+                var temp = reg.exec(val);
+                val = temp? temp[1]/100 : 1;
+            } else {
+                val = curEle.currentStyle[attr];
+            }
+        }
+
+
+        // 把带有 px em rem pt 单位的样式属性值 提取成数字 方便动态计算
+        // -90px 100px 10rem 9em display: block  0.2+1
+        reg = /[+-]?(\d|[1-9]\d+)(\.\d+)?(px|pt|em|rem)?/;
+//        if(reg.test(val)){
+//            val = parseFloat(val);
+//        }
+        return reg.test(val)? parseFloat(val): val;
+    }
+    console.log(getCss(oDiv, 'opacity'));
+
+    var op;
+    var timer = setInterval(function () {
+        op = getCss(oDiv, 'opacity');
+
+        if(op >= 1){
+            oDiv.style.opacity = 1;
+            clearInterval(timer);
+            return;
+        }
+        op += 0.05;
+        oDiv.style.opacity = op;
+    }, 100)
+//    console.log(getCss(oDiv, 'width'));
+    //    typeOf window.getComputedStyle === "undefined"
+//    if(window.getComputedStyle)
+//    if("getComputedStyle" in window)
+//    if(navigator.userAgent.indexOf('MSIE 8.0'))
+//    try catch
+
+//    function F(callBack) {
+//        if(typeof callBack === 'function') {
+//            callBack();
+//        }
+//
+//    }
+//    F(123)
+//    F(function () {
+//        console.log(666);
+//    })
+
+//    setTimeout(function () {
+//
+//    }, 1000)
+//    sort(function () {
+//
+//    })
+</script>
+</body>
+</html>
