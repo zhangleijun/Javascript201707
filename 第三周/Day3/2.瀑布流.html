@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+
+            width: 1056px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        ul {
+            float: left;
+            list-style: none;
+            margin: 20px;
+            width: 224px;
+        }
+
+        ul li {
+            position: relative;
+            border: 1px solid #666;
+            margin-bottom: 20px;
+        }
+
+        ul li a:hover span {
+            display: block;
+        }
+
+        ul li a span {
+            display: none;
+            position: absolute;
+            color: #fff;
+            background-color: #ff4d72;
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            left: 6px;
+            top: 6px;
+        }
+
+        ul li img {
+            width: 222px;
+        }
+
+        ul li p {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="container">
+    <ul></ul>
+    <ul></ul>
+    <ul></ul>
+    <ul></ul>
+</div>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript">
+    var container = document.getElementById('container');
+    var oUls = document.getElementsByTagName('ul');
+    var arrUl = utils.listToArray(oUls);
+
+    // 获取数据
+    function getData(callBack) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', 'data.json');
+        xhr.responseType = 'json';
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && /^2\d{2}$/.test(this.status)) {
+               typeof callBack === "function" ? callBack(this.response) : null;
+            }
+        };
+        xhr.send();
+    }
+
+    getData(function (data) {
+        console.log(data); // 异步请求回来的数据
+    });
+    console.log(123);
+
+
+//    getData(bindData);
+//    getData(function (data) {
+//        console.log(data);
+//           for (var i = 0; i < 50; i++) {
+//            var ind = Math.round(Math.random() * 8);
+//            var cur = data[ind];
+//            var oLi = document.createElement('li');
+//            var oa = document.createElement('a');
+//            oLi.appendChild(oa);
+//
+//            var sp = document.createElement('span');
+//            sp.innerHTML = '采集';
+//            oa.appendChild(sp);
+//
+//            var img = document.createElement('img');
+//            img.src = cur.src;
+//            // 获取随机高 220 - 350  130
+//            img.style.height = Math.round(Math.random() * 130 + 220) + 'px';
+//            oa.appendChild(img);
+//
+//            var op = document.createElement('p');
+//            op.innerHTML = cur.title;
+//            oa.appendChild(op);
+//
+//            // 根据ul高度进行排序
+//            arrUl.sort(function (a, b) {
+//                return utils.getCss(a, 'height') - utils.getCss(b, 'height');
+//            });
+//
+//            // 将创建的li插入到 高度最小的那一个ul里
+//            arrUl[0].appendChild(oLi);
+//        }
+//    });
+
+//    function bindData(data) {
+//        console.log(data);
+//        for (var i = 0; i < 50; i++) {
+//            var ind = Math.round(Math.random() * 8);
+//            var cur = data[ind];
+//            var oLi = document.createElement('li');
+//            var oa = document.createElement('a');
+//            oLi.appendChild(oa);
+//
+//            var sp = document.createElement('span');
+//            sp.innerHTML = '采集';
+//            oa.appendChild(sp);
+//
+//            var img = document.createElement('img');
+//            img.src = cur.src;
+//            // 获取随机高 220 - 350  130
+//            img.style.height = Math.round(Math.random() * 130 + 220) + 'px';
+//            oa.appendChild(img);
+//
+//            var op = document.createElement('p');
+//            op.innerHTML = cur.title;
+//            oa.appendChild(op);
+//
+//            // 根据ul高度进行排序
+//            arrUl.sort(function (a, b) {
+//                return utils.getCss(a, 'height') - utils.getCss(b, 'height');
+//            });
+//
+//            // 将创建的li插入到 高度最小的那一个ul里
+//            arrUl[0].appendChild(oLi);
+//        }
+//    }
+</script>
+</body>
+</html>
