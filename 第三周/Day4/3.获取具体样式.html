@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #outer {
+            width: 200px;
+            height: 200px;
+            background-color: #80ff45;
+            color: green;
+            margin: 120px 0 0 200px;
+            padding: 44px;
+            border: 2px solid #fa4339;
+            /*opacity: 0.3;*/
+            /*filter: alpha(opacity=30);*/
+        }
+
+        #outer:after {
+            content: 'ni hao';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div id="outer" style="width: 200px">
+</div>
+<script type="text/javascript">
+    var outer = document.getElementById('outer');
+    //    console.log(outer.clientWidth); // 无法获取具体样式
+    //    console.log(outer.style.padding); // 只能获取行内
+
+    // window.getComputedStyle 获取的样式 是所有经过浏览器计算过渲染到页面的为准
+    //    console.log(window.getComputedStyle(outer, null/* 伪类*/)['width']); // 返回值 是关于当前元素 样式属性集合 它是CSSStyleDeclaration的一个实例对象
+
+    // 获取关于伪类的样式属性
+    //    console.log(window.getComputedStyle(outer, ':after').content);
+    //    console.log(window.getComputedStyle(outer, ':after').color);
+    // 获取关于当前元素的属性
+    //    console.log(window.getComputedStyle(outer, null).color);
+
+    // window.getComputedStyle 在 IE 6-8 不兼容 currentStyle
+    //    console.log(outer.currentStyle.width);
+
+    function getCss(curEle, attr) {
+        var val;
+        if ("getComputedStyle" in window) {
+            val = window.getComputedStyle(curEle, null)[attr];
+        } else { // IE 6-8 以下 
+            // 如果获取透明度 需要以filter设置的透明度值为主
+            if (attr === 'opacity') {
+                val = curEle.currentStyle['filter'];
+                // alpha(opacity=70.123) sepia(1)
+                var reg = /alpha\(opacity=((?:\d|[1-9]\d+)(?:\.\d+)?)\)/;
+                var temp = reg.exec(val);
+                val = temp ? temp[1] / 100 : 1; // 如果捕获到就将第一个分组返回否则 说明没有设置透明度 就返回 默认值 1
+            } else {
+                val = curEle.currentStyle[attr];
+            }
+
+        }
+        // 将一些获取到的 样式数值 去掉单位
+        // 100px 10rem 10em 20pt '0.3'  'block' 'red'
+        reg = /^[+-]?(\d|[1-9]\d+)(\.\d+)?(px|rem|em|pt)?$/;
+//        if(reg.test(val)){
+//          val = parseFloat(val);
+//        }
+//        return val;
+        return reg.test(val) ? parseFloat(val) : val;
+    }
+    // console.log(getCss(outer, 'opacity'));
+    //    console.log(getCss(outer, 'width'));
+
+    // 只能获取样式
+    //    window.getComputedStyle(outer, null)['width']; // read-only
+    //    console.log(window.getComputedStyle(outer, null)['width']);
+    //    outer.currentStyle['width']
+
+    //    outer.style.width = '800px';
+
+    // 设置样式
+    function setCss(curEle, attr, val) {
+        if (attr === 'opacity') {
+            curEle.style[attr] = val;
+            // alpha(opacity=70)
+            curEle.style.filter = 'alpha(opacity=' + val * 100 + ')';
+            return;
+        }
+
+        // float  cssFloat(ff chrome) styleFloat(IE 低版本)
+        if (attr === 'float') {
+            curEle.style.cssFloat = val;
+            curEle.style.styleFloat = val;
+            return;
+        }
+
+        // 自动补全单位 width height top left right bottom margin padding marginLeft marginTop...
+        var reg = /^width|height|top|left|right|bottom|((margin|padding)(Left|Top|Right|Bottom)?)$/;
+        if (reg.test(attr)) {
+            if (!isNaN(val)) {
+                val += 'px';
+            }
+        }
+        curEle.style[attr] = val;
+    }
+    setCss(outer, 'opacity', 0.5);
+    setCss(outer, 'float', 'right');
+    //  setCss(outer, 'width', '400px');
+    setCss(outer, 'width', '600');
+
+    css(outer, {
+        width: '100px',
+        height: '200px',
+        background: 'red'
+    });
+
+    css(outer, 'opacity', 1);
+    function css(curEle, options, val) {
+        if (typeof options === 'object') {
+            for (var k in options) {
+                setCss(curEle, k, options[k]);
+            }
+//            Object.assign(curEle.style, options); // 合并style对象
+        }
+        setCss(curEle, options, val);
+    }
+
+    //    console.log(outer.style);
+    //   var obj1 = {id: 1, name: 'zhufeng'};
+    //   var obj2 = {id:2, say: 'nihao'};
+    //    var obj3 = Object.assign(obj1, obj2);
+    //    console.log(obj1);
+    //    console.log(obj2);
+    //
+    //    var obj4 = Object.assign({},obj2);
+    //
+    //     console.log(obj4);
+
+
+    //    Object.myAssign = function (obj1, obj2) {
+    //        for(var k in obj2){
+    //            obj1[k] = obj2[k];
+    //        }
+    //        return obj1;
+    //    };
+    //    var obj1 = {id: 1, name: 'zhufeng'};
+    //    var obj2 = {id:2, say: 'nihao'};
+    //    var obj3 = Object.myAssign(obj1, obj2);
+    //
+    //    console.log(obj3 === obj1);
+
+</script>
+</body>
+</html>
